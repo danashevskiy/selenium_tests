@@ -4,29 +4,128 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-PAGE = 'http://priority.finwhale.ru'
-INN = "7708737490"
-NAME = "Иван"
-SURENAME = "Иванович"
-SEC_NAME = "Иванов"
-PHONE = "89216362048"
-EMAIL = "danashevskiy@gmail.com"
-PAGE_TITLE = 'FINWHALE PRIORITY'
-
 
 class FinhwalePriorityPage:
     '''
-    Class to create test cases for finwhale priority page
+    Page Class to create test cases for finwhale priority page
     '''
     _driver = None
+    _wait = None
     
     def __init__(self, page):
         self._driver = webdriver.Firefox()
-        wait = WebDriverWait(self._driver, 10)
+        self._wait = WebDriverWait(self._driver, 10)
         self._driver.get(page)
         
     def close_page(self):
-        self._driver.close() 
+        self._driver.close()
+        
+    def accept_cookies(self):
+        button = self._driver.find_element(By.XPATH, "//button[.//p[text()='Принять']]")
+        button.click()
+        
+    def login(self):
+        login_button = self._driver.find_element(by=By.CSS_SELECTOR, value="button")
+        login_button.click()
+        
+    def register_user(self):
+        button = self._driver.find_element(By.XPATH, "//button[.//p[text()='Зарегистрироваться']]")
+        self._driver.execute_script("arguments[0].click();", button)
+        return FinwhaleRegistrationForm(self._driver, self._wait)
+        
+class FinwhaleRegistrationForm:
+    '''
+    Component class for registration form filling
+    '''
+    _driver = None
+    _wait = None
+    
+    def __init__(self, driver, wait):
+        self._driver = driver
+        self._wait = wait
+    
+    def choose_organization(self, num):
+        inn = self._driver.find_element(By.ID, "company_inn")
+        inn.send_keys(num)
+        dropdown = self._wait.until(  
+            EC.visibility_of_all_elements_located((By.CLASS_NAME, "input-search__options")) 
+        )
+        option = self._wait.until( 
+            EC.element_to_be_clickable((By.XPATH, "//li[@class='input-search__option'][1]")) 
+        )
+        option.click()
+        
+    
+    def set_same_address(self):
+        check_adr = self._driver.find_element(By.CLASS_NAME, "checkbox__point")
+        check_adr.click()
+    
+    
+    def choose_segment(self):
+        segment = self._driver.find_element(By.ID, "segment")
+        segment.click()
+        dropdown = self._wait.until(   
+            EC.visibility_of_element_located((By.CLASS_NAME, "select__option"))
+        )
+        option = self._wait.until(
+            EC.element_to_be_clickable((By.XPATH, "//span[@class='select__result'][1]"))
+        )
+        option.click()
+    
+    
+    def fill_surname(self, name):
+        surename = self._driver.find_element(By.ID,"last_name")
+        surename.send_keys(name) 
+        
+    
+    def fill_name(self, name):
+        self._driver.find_element(By.ID, "first_name").send_keys(name)
+        
+    def fill_sec_name(self, name):
+        self._driver.find_element(By.ID, "sur_name").send_keys(name)
+    
+    def fill_phone_number(self, num):
+        phone = self._driver.find_element(By.ID,"phone") 
+        phone.send_keys(num)
+        
+    
+    def fill_email(self, email):
+        mail = self._driver.find_element(By.ID, "email")
+        mail.send_keys(email)
+        
+    
+    def choose_curator(self):
+        dist = self._driver.find_element(By.ID, "curator")
+        self._driver.execute_script("arguments[0].scrollIntoView(true);", dist)
+        dist.click()
+        dropdown = self._wait.until(
+            EC.visibility_of_element_located((By.CLASS_NAME,"select__options.select__options_certificate"))
+        )
+        option = self._wait.until( 
+            EC.presence_of_element_located((By.XPATH, "//span[@class='select__result'][1]")) 
+        )
+        option = self._driver.find_elements(By.XPATH, "//span[@class='select__result']")
+        option[5].click()
+        
+     
+    def set_wo_manager(self):
+        manager_check = self._driver.find_element(By.ID, "agreementMember")
+        self._driver.execute_script("arguments[0].click();", manager_check)
+         
+     
+    def set_notification_email(self):
+        notify = self._driver.find_element(By.ID,"dataAgreement")
+        self._driver.execute_script("arguments[0].click();", notify)
+         
+     
+    def set_privacy(self):
+        privacy = self._driver.find_element(By.ID, "privacy")
+        self._driver.execute_script("arguments[0].click();", privacy)
+         
+     
+    def send_registration_form(self):
+        button = self._driver.find_element(By.CLASS_NAME, "tab-modal__content_button.tab-modal__content_button_center")
+        button.click()
     
 '''
 def page_browse(driver, wait):
