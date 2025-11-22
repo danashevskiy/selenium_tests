@@ -1,5 +1,6 @@
 import pytest
 import baza_page
+from driver import Driver
 
 PAGE = 'http://priority.finwhale.ru'
 INN = "7708737490"
@@ -14,9 +15,11 @@ PAGE_TITLE = 'FINWHALE PRIORITY'
 def resource_page():
     '''fixture: Обертка для тестового класса'''
     #print('>>', 'fixture: Запуск обертки для тестовго класса')
-    finwhale = baza_page.FinhwalePriorityPage(PAGE)
+    browser = Driver()
+    browser.get(PAGE)
+    finwhale = baza_page.FinhwalePriorityPage()
     yield finwhale
-    #finwhale.close_page()
+    browser.close()
     #print('>>', 'fixture: Завершение обертки для тестовго класса')
     
 
@@ -30,7 +33,7 @@ def test_registration(resource_page):
     resource_page.accept_cookies()
     resource_page.login()
     user_reg = resource_page.register_user()
-    assert "Регистрация" in resource_page._driver.page_source
+    assert "Регистрация" in Driver().page_source
     user_reg.choose_organization(INN)
     user_reg.set_same_address()
     user_reg.choose_segment()
@@ -44,6 +47,6 @@ def test_registration(resource_page):
     user_reg.set_notification_email()
     user_reg.set_privacy()
     user_reg.send_registration_form()
-    assert "Введите код подтверждения" in resource_page._driver.page_source
+    assert "Введите код подтверждения" in Driver().page_source
     
 
