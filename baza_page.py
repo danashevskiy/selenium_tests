@@ -17,14 +17,10 @@ class FinhwalePriorityPage:
         button.click()
         
     def login(self):
-        login_button = Driver().find_element(by=By.CSS_SELECTOR, value="button")
+        login_button = Driver().find_element(by=By.CSS_SELECTOR, value=".button[class*='button_upper']")
         login_button.click()
-        
-    def register_user(self):
-        button = Driver().find_element(By.XPATH, "//button[.//p[text()='Зарегистрироваться']]")
-        Driver().execute_script("arguments[0].click();", button)
-        return FinwhaleRegistrationForm()
-        
+        return FinwhaleLoginForm()
+         
 class FinwhaleRegistrationForm:
     '''
     Component class for registration form filling
@@ -114,4 +110,24 @@ class FinwhaleRegistrationForm:
     def send_registration_form(self):
         button = Driver().find_element(By.CLASS_NAME, "tab-modal__content_button.tab-modal__content_button_center")
         button.click()
+        
+class FinwhaleLoginForm:
+    """
+    Component class for log in
+    """
+    
+    def type_login(self, login):
+        Driver().find_element(By.ID, "login").send_keys(login)
+        
+    def type_password(self, pswd):
+        Driver().find_element(By.ID, "password").send_keys(pswd)
+        
+    def press_login(self):
+        button = Driver().find_element(by=By.CLASS_NAME, value="modal__content_button")
+        button.click()
+        
+    def register_user(self):
+        button = Driver().find_element(By.XPATH, "//button[.//p[text()='Зарегистрироваться']]")
+        Driver().execute_script("arguments[0].click();", button)
+        return FinwhaleRegistrationForm()
 
