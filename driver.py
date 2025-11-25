@@ -15,6 +15,7 @@ def singleton(cls):
         if cls not in _instances:
             _instances[cls] = cls(*args, **kwargs)
         return _instances[cls]
+    wrapper.reset_instances = lambda: _instances.clear()
     return wrapper
 
 @singleton
