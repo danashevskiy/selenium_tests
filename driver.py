@@ -1,4 +1,4 @@
-from selenium.webdriver import Firefox
+from playwright.sync_api import Page
 
 #class Singleton(type):
 #    _instances = {}
@@ -19,7 +19,14 @@ def singleton(cls):
     return wrapper
 
 @singleton
-class Driver(Firefox):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.implicitly_wait(5)  # default time waiting for a locator
+class Driver():
+    def __init__(self, page: Page, *args, **kwargs):
+        self._page = page
+        if self._page:
+            self._page.set_default_timeout(10000)
+            
+    def __getattr__(self, name):
+        """Делегируем все вызовы к page объекту"""
+        if not self._page:
+            raise RuntimeError("Page не инициализирован. Сначала установите page через set_page()")
+        return getattr(self._page, name)

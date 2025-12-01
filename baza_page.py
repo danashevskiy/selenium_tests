@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from driver import Driver
+from playwright.sync_api import Page
 
 
 class FinhwalePriorityPage:
@@ -13,12 +14,13 @@ class FinhwalePriorityPage:
         pass
         
     def accept_cookies(self):
-        button = Driver().find_element(By.XPATH, "//button[.//p[text()='Принять']]")
-        button.click()
+        Driver().locator("//button[.//p[text()='Принять']]").click()
+        
+    def open_menu(self):
+        Driver().locator("#menu-icon").click()
         
     def login(self):
-        login_button = Driver().find_element(by=By.CSS_SELECTOR, value=".button[class*='button_upper']")
-        login_button.click()
+        Driver().get_by_role('button', name="Войти").click()
         return FinwhaleLoginForm()
          
 class FinwhaleRegistrationForm:
@@ -117,17 +119,15 @@ class FinwhaleLoginForm:
     """
     
     def type_login(self, login):
-        Driver().find_element(By.ID, "login").send_keys(login)
+        Driver().locator("#login").fill(login)
         
     def type_password(self, pswd):
-        Driver().find_element(By.ID, "password").send_keys(pswd)
+        Driver().locator("#password").fill(pswd)
         
     def press_login(self):
-        button = Driver().find_element(by=By.CLASS_NAME, value="modal__content_button")
-        button.click()
+        Driver().get_by_role('button', name="Войти").click()
         
     def register_user(self):
-        button = Driver().find_element(By.XPATH, "//button[.//p[text()='Зарегистрироваться']]")
-        Driver().execute_script("arguments[0].click();", button)
+        Driver().find_element("//button[.//p[text()='Зарегистрироваться']]").click()
         return FinwhaleRegistrationForm()
 
