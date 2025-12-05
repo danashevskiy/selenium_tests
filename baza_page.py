@@ -4,6 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from driver import Driver
 from playwright.sync_api import Page
+import allure
 
 
 class FinhwalePriorityPage:
@@ -14,14 +15,17 @@ class FinhwalePriorityPage:
         pass
         
     def accept_cookies(self):
-        Driver().locator("//button[.//p[text()='Принять']]").click()
+        with allure.step(f'Accept cookies'):
+            Driver().locator("//button[.//p[text()='Принять']]").click()
         
     def open_menu(self):
-        Driver().locator("#menu-icon").click()
+        with allure.step(f'Open menu page'):
+            Driver().locator("#menu-icon").click()
         
     def login(self):
-        Driver().get_by_role('button', name="Войти").click()
-        return FinwhaleLoginForm()
+        with allure.step(f'Accept cookies'):
+            Driver().get_by_role('button', name="Войти").click()
+            return FinwhaleLoginForm()
          
 class FinwhaleRegistrationForm:
     '''
@@ -119,13 +123,16 @@ class FinwhaleLoginForm:
     """
     
     def type_login(self, login):
-        Driver().locator("#login").fill(login)
+        with allure.step(f'Typing login "{login}"'):
+            Driver().locator("#login").fill(login)
         
     def type_password(self, pswd):
-        Driver().locator("#password").fill(pswd)
+        with allure.step(f'Typing password "{pswd}"'):
+            Driver().locator("#password").fill(pswd)
         
     def press_login(self):
-        Driver().get_by_role('button', name="Войти").click()
+        with allure.step(f'Clicking login'):
+            Driver().get_by_role('button', name="Войти").click()
         
     def register_user(self):
         Driver().find_element("//button[.//p[text()='Зарегистрироваться']]").click()

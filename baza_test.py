@@ -6,7 +6,7 @@ from driver import Driver
 #from selenium.webdriver.common.by import By
 from playwright.sync_api import Page, expect, Browser, BrowserContext
 import re
-#import asyncio
+import allure
 
 PAGE = 'http://priority.finwhale.ru'
 INN = "7708737490"
@@ -22,7 +22,8 @@ PASSWORD = 'Danashevskiy!'
 def resource_page(page: Page):
     '''fixture: Обертка для тестового класса'''
     browser = Driver(page)
-    browser.goto('http://priority.finwhale.ru')
+    with allure.step(f'Opening the url "{PAGE}"'):
+        browser.goto(PAGE)
     finwhale = baza_page.FinhwalePriorityPage()
     yield finwhale
     Driver.reset_instances()
